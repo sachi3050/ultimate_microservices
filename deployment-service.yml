@@ -30,20 +30,20 @@ spec:
           readOnlyRootFilesystem: true
         image: sachidananda06/emailservice:latest
         ports:
-        - containerPort: 8080
+        - containerPort: 8000
         env:
         - name: PORT
-          value: "8080"
+          value: "8000"
         - name: DISABLE_PROFILER
           value: "1"
         readinessProbe:
           periodSeconds: 5
           exec:
-            command: ["/bin/grpc_health_probe", "-addr=:8080"]
+            command: ["/bin/grpc_health_probe", "-addr=:8000"]
         livenessProbe:
           periodSeconds: 5
           exec:
-            command: ["/bin/grpc_health_probe", "-addr=:8080"]
+            command: ["/bin/grpc_health_probe", "-addr=:8000"]
         resources:
           requests:
             cpu: 100m
@@ -63,7 +63,7 @@ spec:
   ports:
   - name: grpc
     port: 5000
-    targetPort: 8080
+    targetPort: 8000
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -83,16 +83,16 @@ spec:
         - name: server
           image: sachidananda06/checkoutservice:latest
           ports:
-          - containerPort: 5050
+          - containerPort: 5000
           readinessProbe:
             exec:
-              command: ["/bin/grpc_health_probe", "-addr=:5050"]
+              command: ["/bin/grpc_health_probe", "-addr=:5000"]
           livenessProbe:
             exec:
-              command: ["/bin/grpc_health_probe", "-addr=:5050"]
+              command: ["/bin/grpc_health_probe", "-addr=:5000"]
           env:
           - name: PORT
-            value: "5050"
+            value: "5000"
           - name: PRODUCT_CATALOG_SERVICE_ADDR
             value: "productcatalogservice:3550"
           - name: SHIPPING_SERVICE_ADDR
@@ -123,8 +123,8 @@ spec:
     app: checkoutservice
   ports:
   - name: grpc
-    port: 5050
-    targetPort: 5050
+    port: 5000
+    targetPort: 5000
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -145,18 +145,18 @@ spec:
       - name: server
         image: sachidananda06/recommendationservice:latest
         ports:
-        - containerPort: 8080
+        - containerPort: 8000
         readinessProbe:
           periodSeconds: 5
           exec:
-            command: ["/bin/grpc_health_probe", "-addr=:8080"]
+            command: ["/bin/grpc_health_probe", "-addr=:8000"]
         livenessProbe:
           periodSeconds: 5
           exec:
-            command: ["/bin/grpc_health_probe", "-addr=:8080"]
+            command: ["/bin/grpc_health_probe", "-addr=:8000"]
         env:
         - name: PORT
-          value: "8080"
+          value: "8000"
         - name: PRODUCT_CATALOG_SERVICE_ADDR
           value: "productcatalogservice:3550"
         - name: DISABLE_PROFILER
@@ -179,8 +179,8 @@ spec:
     app: recommendationservice
   ports:
   - name: grpc
-    port: 8080
-    targetPort: 8080
+    port: 8000
+    targetPort: 8000
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -202,12 +202,12 @@ spec:
         - name: server
           image: sachidananda06/frontend:latest
           ports:
-          - containerPort: 8080
+          - containerPort: 8000
           readinessProbe:
             initialDelaySeconds: 10
             httpGet:
               path: "/_healthz"
-              port: 8080
+              port: 8000
               httpHeaders:
               - name: "Cookie"
                 value: "shop_session-id=x-readiness-probe"
@@ -215,13 +215,13 @@ spec:
             initialDelaySeconds: 10
             httpGet:
               path: "/_healthz"
-              port: 8080
+              port: 8000
               httpHeaders:
               - name: "Cookie"
                 value: "shop_session-id=x-liveness-probe"
           env:
           - name: PORT
-            value: "8080"
+            value: "8000"
           - name: PRODUCT_CATALOG_SERVICE_ADDR
             value: "productcatalogservice:3550"
           - name: CURRENCY_SERVICE_ADDR
@@ -229,11 +229,11 @@ spec:
           - name: CART_SERVICE_ADDR
             value: "cartservice:7070"
           - name: RECOMMENDATION_SERVICE_ADDR
-            value: "recommendationservice:8080"
+            value: "recommendationservice:8000"
           - name: SHIPPING_SERVICE_ADDR
             value: "shippingservice:50051"
           - name: CHECKOUT_SERVICE_ADDR
-            value: "checkoutservice:5050"
+            value: "checkoutservice:5000"
           - name: AD_SERVICE_ADDR
             value: "adservice:9555"
           # # ENV_PLATFORM: One of: local, gcp, aws, azure, onprem, alibaba
@@ -265,7 +265,7 @@ spec:
   ports:
   - name: http
     port: 80
-    targetPort: 8080
+    targetPort: 8000
 ---
 apiVersion: v1
 kind: Service
@@ -278,7 +278,7 @@ spec:
   ports:
   - name: http
     port: 80
-    targetPort: 8080
+    targetPort: 8000
 ---
 apiVersion: apps/v1
 kind: Deployment
